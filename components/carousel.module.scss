@@ -1,0 +1,420 @@
+
+.carouselContainer {
+    position: relative;
+    display: grid;
+    min-height: 100vh;
+    width: 100vw;
+    grid-template-columns: 50% 50%;
+    grid-template-rows: 100%;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 10vw;
+    overflow: hidden;
+    transition: opacity 1.5s cubic-bezier(0.22, 1, 0.36, 1);
+    
+    // New background transition layers with improved transitions
+    .backgroundTransition,
+    .backgroundCurrent {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+    }
+    
+    .backgroundCurrent {
+        z-index: 1;
+        transition: opacity 2s cubic-bezier(0.22, 1, 0.36, 1); // Slower, more fluid transition
+        will-change: opacity;
+    }
+    
+    // Spiral/swirl gradient background
+    .spiralBackground {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(
+            circle at center,
+            transparent 0%,
+            rgba(255, 255, 255, 0.05) 35%,
+            transparent 60%,
+            rgba(255, 255, 255, 0.03) 100%
+        );
+        // Add subtle spiral-like pattern
+        &::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            right: -50%;
+            bottom: -50%;
+            background: conic-gradient(
+                from 0deg at 50% 50%,
+                rgba(255, 255, 255, 0.03) 0%,
+                transparent 25%,
+                rgba(255, 255, 255, 0.03) 50%,
+                transparent 75%,
+                rgba(255, 255, 255, 0.03) 100%
+            );
+            opacity: 0.3;
+            z-index: 0;
+            animation: rotateSlow 60s linear infinite;
+        }
+        z-index: 1;
+    }
+    
+    // Rotation animation for spiral
+    @keyframes rotateSlow {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+    
+    // Background pattern
+    .bgPattern {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' x%3E%3Cg fill='%23ffffff' fill-opacity='0.05' fill-rule='evenodd'%3E%3Ccircle cx='3' cy='3' r='3'/%3E%3Ccircle cx='13' cy='13' r='3'/%3E%3C/g%3E%3C/svg%3E");
+        opacity: 0.4;
+        z-index: 2;
+    }
+    
+    // Background gradient overlay
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.5));
+        z-index: 2;
+        pointer-events: none;
+    }
+    
+    // Additional background effects
+    .backgroundOverlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-size: cover;
+        background-position: center;
+        opacity: 0.25; // Slightly increased opacity
+        transition: opacity 0.8s ease;
+        z-index: 2;
+        
+        &::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at center, transparent 30%, rgba(0, 0, 0, 0.4) 100%);
+            z-index: 1;
+        }
+    }
+    
+    // Content container
+    .contentContainer {
+        position: relative;
+        z-index: 3;
+        color: white;
+        max-width: 600px;
+        
+        .titleContainer {
+            padding: 0 0 2rem 0;
+            
+            h1 {
+                font-size: 3.5rem;
+                font-weight: 700;
+                line-height: 1.2;
+                margin-bottom: 1rem;
+                text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+                background: linear-gradient(to right, #ffffff, rgba(255, 255, 255, 0.8));
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }
+        }
+        
+        .descriptionContainer {
+            padding: 0 0 2rem 0;
+            
+            p {
+                font-size: 1.15rem;
+                line-height: 1.7;
+                max-width: 40rem;
+                text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+                color: rgba(255, 255, 255, 0.9);
+            }
+        }
+        
+        .buttonContainer {
+            button {
+                position: relative;
+                background: rgba(255, 255, 255, 0.15);
+                color: white;
+                border: 2px solid rgba(255, 255, 255, 0.7);
+                padding: 0.9rem 2.5rem;
+                font-size: 1rem;
+                font-weight: 600;
+                text-transform: uppercase;
+                border-radius: 0.3rem;
+                cursor: pointer;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                letter-spacing: 0.08em;
+                overflow: hidden;
+                
+                &::after {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    left: -100%;
+                    width: 100%;
+                    height: 100%;
+                    background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.2), transparent);
+                    transition: left 0.5s ease;
+                }
+                
+                &:hover {
+                    background: rgba(255, 255, 255, 0.25);
+                    transform: translateY(-3px);
+                    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+                    border-color: rgba(255, 255, 255, 0.9);
+                    
+                    &::after {
+                        left: 100%;
+                    }
+                }
+                
+                &:active {
+                    transform: translateY(-1px);
+                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+                }
+            }
+        }
+    }
+    
+    // Images carousel container
+    .imagesContainer {
+        display: flex;
+        flex-direction: row-reverse;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        height: 40rem;
+        z-index: 3; // Updated z-index to be above background layers
+        perspective: 1200px;
+        
+        // Individual slide container
+        .slideContainer {
+            position: absolute;
+            width: clamp(20rem, 24vw, 26rem);
+            height: auto;
+            transition: all 0.25s ease;
+            perspective: 1000px;
+            transform-style: preserve-3d;
+            will-change: transform, opacity;
+            
+            // Card wrapper with fancy border and effects
+            .slideImageWrapper {
+                position: relative;
+                width: 100%;
+                height: auto;
+                border: 4px solid transparent;
+                border-radius: 1.5rem;
+                overflow: hidden;
+                transition: box-shadow 0.7s cubic-bezier(0.4, 0, 0.2, 1), 
+                            transform 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                            border-color 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+                box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+                transform-style: preserve-3d;
+                
+                
+                // Image overlay for non-active slides
+                .slideOverlay {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0, 0, 0, 0.5);
+                    z-index: 1;
+                    transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+                }
+                
+                // Slide images
+                .slideImage {
+                    width: 100%;
+                    height: auto;
+                    aspect-ratio: 3/4;
+                    object-fit: cover;
+                    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+                    transform-origin: center center;
+                    will-change: transform;
+                }
+                
+                // Hover effect for active slide
+                &:hover {
+                    .slideImage {
+                        transform: scale(1.03);
+                    }
+                }
+            }
+        }
+        
+        // Navigation controls and pagination
+        .controls {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%) translateY(5rem);
+            width: 20rem;
+            z-index: 20;
+            
+            // Simple pagination dots
+            .pagination {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                
+                .paginationDot {
+                    width: 8px;
+                    height: 8px;
+                    border-radius: 50%;
+                    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                    cursor: pointer;
+                    
+                    &.activeDot {
+                        width: 12px;
+                        height: 12px;
+                        box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+                    }
+                }
+            }
+            
+            // Previous and next buttons
+            .previousContainer,
+            .nextContainer {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background-color: rgba(0, 0, 0, 0.2);
+                border: solid 2px transparent;
+                border-radius: 50%;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                height: 4rem;
+                width: 4rem;
+                
+                &:hover {
+                    border-color: #eb5757;
+                    transform: scale(1.08);
+                    background-color: rgba(0, 0, 0, 0.3);
+                    box-shadow: 0 0 15px rgba(235, 87, 87, 0.4);
+                }
+                
+                &:active {
+                    transform: scale(1);
+                }
+            }
+            
+            // Disabled navigation buttons
+            .disabled {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background-color: rgba(0, 0, 0, 0.1);
+                border: solid 2px transparent;
+                border-radius: 50%;
+                transition: all 0.3s ease;
+                height: 4rem;
+                width: 4rem;
+                cursor: not-allowed;
+                opacity: 0.5;
+            }
+        }
+    }
+}
+
+// Add scroll transition effect for the section
+.carouselSection {
+    position: relative;
+    
+    &::before {
+        content: '';
+        position: absolute;
+        top: -100px;
+        left: 0;
+        right: 0;
+        height: 100px;
+        background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.2));
+        z-index: 1;
+        pointer-events: none;
+    }
+}
+
+// Responsive design
+@media screen and (max-width: 1199px) {
+    .carouselContainer {
+        padding: 0 5vw;
+        
+        .contentContainer {
+            .titleContainer {
+                h1 {
+                    font-size: 3rem;
+                }
+            }
+        }
+    }
+}
+
+@media screen and (max-width: 950px) {
+    .carouselContainer {
+        display: grid;
+        min-height: 100vh;
+        width: 100vw;
+        grid-template-columns: 100%;
+        grid-template-rows: auto auto;
+        gap: 2rem;
+        
+        .contentContainer {
+            padding: 3rem 0 1rem 0;
+            max-width: 100%;
+            
+            .titleContainer {
+                h1 {
+                    font-size: 2.5rem;
+                }
+            }
+        }
+        
+        .imagesContainer {
+            height: 35rem;
+            padding: 0 0 6rem 0;
+            
+            .slideContainer {
+                width: clamp(16rem, 20vw, 22rem);
+            }
+            
+            .controls {
+                bottom: 0;
+                padding: 0 0 1rem 0;
+            }
+        }
+    }
+}

@@ -1,0 +1,16 @@
+fastapi
+uvicorn
+authlib
+python-dotenv
+starlette
+sentence-transformers
+pinecone-client
+langchain
+redis
+pdfplumber
+transformers
+torch
+scikit-learn
+numpy
+pydantic
+httpx
