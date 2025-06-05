@@ -11,7 +11,9 @@ app = FastAPI()
 origins = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
-    "https://final-rag-rawashivanshis-projects.vercel.app/",  
+    "https://final-rag-rawashivanshis-projects.vercel.app",  # Fixed
+    "https://final-rag-cl23.onrender.com", 
+    "https://final-kk8fdc0i9-rawashivanshis-projects.vercel.app"  # Fixed
 ]
 
 app.add_middleware(
@@ -21,6 +23,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
 
 @app.get("/")
 async def root():
