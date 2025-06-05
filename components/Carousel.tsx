@@ -268,7 +268,7 @@ const Carousel = () => {
           </div>
           <motion.div className={styles.buttonContainer} variants={textVariants}>
             <button
-              onClick={() => router.push("/mahabharata-rag")}
+              
               className={styles.discoverMoreButton}
             >
               Discover More
