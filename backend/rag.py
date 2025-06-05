@@ -28,6 +28,13 @@ except ImportError:
     TOGETHER_AVAILABLE = False
     print("Warning: Together AI not available")
 
+try:
+    import cohere
+    COHERE_AVAILABLE = True
+except ImportError:
+    COHERE_AVAILABLE = False
+    print("Warning: Cohere not available")
+
 # Initialize Pinecone if available
 if PINECONE_AVAILABLE:
     try:
@@ -170,26 +177,52 @@ def build_prompt(message: str, history: List[str], mode: str, character: Optiona
     return "\n".join(prompt_parts)
 
 def call_llm(prompt: str) -> str:
-    """Call the LLM API to generate a response"""
-    if not TOGETHER_AVAILABLE:
-        return "I'm sorry, but the Together AI service is not available. Please check your installation."
-    
-    api_key = os.getenv("TOGETHER_API_KEY")
-    if not api_key:
-        return "I'm sorry, but the TOGETHER_API_KEY is not configured. Please check your .env file."
-    
-    try:
-        client = Together(api_key=api_key)
-        response = client.chat.completions.create(
-            model="meta-llama/Llama-3-70b-chat-hf",
-            messages=[
-                {"role": "system", "content": "You are an expert on the Mahabharata. Provide accurate, helpful responses based on the epic. When responding as a character, stay true to their personality and perspective."},
-                {"role": "user", "content": prompt}
-            ],
-            max_tokens=512,
-            temperature=0.7
-        )
-        return response.choices[0].message.content
-    except Exception as e:
-        print(f"Error calling Together API: {e}")
-        return f"I apologize, but I'm having trouble accessing the AI service. Error: {str(e)}. Please check your API configuration."
+    """Call the LLM API to generate a response, with fallback to Cohere if Together fails"""
+    # Try Together AI first
+    if TOGETHER_AVAILABLE and os.getenv("TOGETHER_API_KEY"):
+        try:
+            client = Together(api_key=os.getenv("TOGETHER_API_KEY"))
+            response = client.chat.completions.create(
+                model="meta-llama/Llama-3-70b-chat-hf",
+                messages=[
+                    {"role": "system", "content": "You are an expert on the Mahabharata. Provide accurate, helpful responses based on the epic. When responding as a character, stay true to their personality and perspective."},
+                    {"role": "user", "content": prompt}
+                ],
+                max_tokens=512,
+                temperature=0.7
+            )
+            return response.choices[0].message.content
+        except Exception as e:
+            print(f"Error calling Together API: {e}")
+            # Fallback to Cohere if available
+            if COHERE_AVAILABLE and os.getenv("COHERE_API_KEY"):
+                try:
+                    co = cohere.Client(os.getenv("COHERE_API_KEY"))
+                    co_response = co.generate(
+                        model="command-r-plus",
+                        prompt=prompt,
+                        max_tokens=512,
+                        temperature=0.7
+                    )
+                    return co_response.generations[0].text
+                except Exception as e2:
+                    print(f"Error calling Cohere API: {e2}")
+                    return f"I apologize, but I'm having trouble accessing the AI services. Errors: Together: {str(e)}, Cohere: {str(e2)}"
+            else:
+                return f"I apologize, but I'm having trouble accessing the AI service. Error: {str(e)}"
+    # If Together is not available, try Cohere
+    elif COHERE_AVAILABLE and os.getenv("COHERE_API_KEY"):
+        try:
+            co = cohere.Client(os.getenv("COHERE_API_KEY"))
+            co_response = co.generate(
+                model="command-r-plus",
+                prompt=prompt,
+                max_tokens=512,
+                temperature=0.7
+            )
+            return co_response.generations[0].text
+        except Exception as e:
+            print(f"Error calling Cohere API: {e}")
+            return f"I apologize, but I'm having trouble accessing the Cohere AI service. Error: {str(e)}"
+    else:
+        return "No AI service is available. Please check your API configuration."

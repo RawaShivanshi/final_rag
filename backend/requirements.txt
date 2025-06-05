@@ -9,6 +9,8 @@ langchain
 redis
 pdfplumber
 transformers
+together
+cohere
 torch
 scikit-learn
 numpy
