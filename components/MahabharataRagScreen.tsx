@@ -71,7 +71,7 @@ export default function MahabharataRagScreen({ onBack }: MahabharataRagScreenPro
     setLoading(true);
 
     try {
-      const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+      const API_BASE_URL = "https://final-rag-cl23.onrender.com" ;
       const response = await fetch(`${API_BASE_URL}/chat`, {
         method: "POST",
         headers: {

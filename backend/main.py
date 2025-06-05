@@ -9,11 +9,13 @@ app = FastAPI()
 
 # CORS middleware to allow frontend requests
 origins = [
+    "https://final-rag.vercel.app"
     "http://localhost:3000",
     "http://127.0.0.1:3000",
-    "https://final-rag-rawashivanshis-projects.vercel.app",  # Fixed
+    "https://ominous-enigma-vxqp775j77jfx65r-3000.app.github.dev",
+    "https://final-rag-rawashivanshis-projects.vercel.app",
     "https://final-rag-cl23.onrender.com", 
-    "https://final-kk8fdc0i9-rawashivanshis-projects.vercel.app"  # Fixed
+    "https://final-kk8fdc0i9-rawashivanshis-projects.vercel.app"
 ]
 
 app.add_middleware(
@@ -23,8 +25,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-
 
 @app.get("/")
 async def root():
@@ -36,10 +36,8 @@ async def get_characters():
     try:
         with open("character_profiles.json", "r", encoding="utf-8") as f:
             data = json.load(f)
-        # Return as a list of {name, description}
         return [{"name": k, "description": v.get("summary", "")} for k, v in data.items()]
     except FileNotFoundError:
-        # Fallback characters if file not found
         return [
             {"name": "Karna", "description": "Generous warrior"},
             {"name": "Krishna", "description": "Divine guide"},
@@ -49,24 +47,18 @@ async def get_characters():
             {"name": "Yudhishthira", "description": "King of dharma"},
             {"name": "Duryodhana", "description": "Rival king"}
         ]
-        
-        
-        
 
 @app.post("/chat", response_model=ChatResponse)
 async def chat_endpoint(req: ChatRequest):
-    # Retrieve session history
     history = get_history(req.session_id)
-    # Retrieve context from Pinecone
     retrieved_chunks = retrieve_chunks(req.message)
-    # If nothing relevant found, fallback to LLM only
+    
     if not retrieved_chunks:
         prompt = build_prompt(req.message, history, req.mode, req.character, None)
         confidence = 0.0
         sources = None
     else:
         prompt = build_prompt(req.message, history, req.mode, req.character, retrieved_chunks)
-        # Get the highest similarity score from retrieved chunks
         confidence = max(chunk.get("similarity_score", 0.0) for chunk in retrieved_chunks)
         sources = [
             {
@@ -76,10 +68,11 @@ async def chat_endpoint(req: ChatRequest):
             }
             for chunk in retrieved_chunks
         ]
+    
     response = call_llm(prompt)
-    # Save user message and bot response to history
     add_to_history(req.session_id, f"User: {req.message}")
     add_to_history(req.session_id, f"Bot: {response}")
+    
     return ChatResponse(
         response=response,
         character=req.character if req.mode == "character" else None,
