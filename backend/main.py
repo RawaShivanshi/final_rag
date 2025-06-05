@@ -5,30 +5,15 @@ from utils import get_history, add_to_history
 from rag import retrieve_chunks, build_prompt, call_llm
 import json
 
-app = FastAPI()
-
-# CORS middleware to allow frontend requests
-origins = [
-    "https://final-rag.vercel.app"
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-    "https://ominous-enigma-vxqp775j77jfx65r-3000.app.github.dev",
-    "https://final-rag-rawashivanshis-projects.vercel.app",
-    "https://final-rag-cl23.onrender.com", 
-    "https://final-kk8fdc0i9-rawashivanshis-projects.vercel.app"
-]
-
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # Allows all origins
-    allow_credentials=True,
     allow_methods=["*"],  # Allows all methods
     allow_headers=["*"],  # Allows all headers
+    # Do NOT set allow_credentials=True if you use allow_origins=["*"]
 )
 
 
