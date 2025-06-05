@@ -1,6 +1,6 @@
 import { useState } from "react";
 import MahabharataRagScreen from "./MahabharataRagScreen";
-
+import { motion } from "framer-motion";
 export default function SageChat() {
   const [journeyStarted, setJourneyStarted] = useState(false);
 
@@ -10,7 +10,15 @@ export default function SageChat() {
   }
 
   return (
-    <div className="flex flex-row  md:flex-row items-center justify-center gap-10 w-full px-6 py-10">
+
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.7, ease: "easeOut" }}
+      className="flex flex-row md:flex-row items-center justify-center gap-10 w-full px-6 h-screen"
+    >
+    <div className="flex flex-row md:flex-row items-center justify-center gap-10 w-full px-6 h-screen">
+ 
       <div className="relative w-[300px] h-[300px] md:w-[400px] md:h-[400px]">
         {/* Glow */}
         <div className="absolute inset-0 w-full h-full rounded-full bg-yellow-300 opacity-30 blur-2xl z-0" />
@@ -40,23 +48,18 @@ export default function SageChat() {
       </div>
 
       {/* Right section */}
-      <div className="flex flex-col gap-6 items-center md:items-start w-[600px] h-full max-w-lg">
-        <h1 className="text-3xl md:text-4xl font-bold text-[#A75D5D] text-center md:text-left">
-          Dharma Verse Oracle
-        </h1>
-        
-        <h2 className="text-2xl font-semibold text-[#7D6E83] text-center md:text-left">
+      <div className="py-[100px] px-[100px]">
+      <div className="flex flex-col items-center md:items-start w-[600px] h-full max-w-lg">
+       <h1 style={{ fontSize: "54px", fontWeight: "900" ,marginBottom: "4px" }} className="text-center text-[#A75D5D]">
+       Dharma Verse Oracle
+      </h1>
+        <h2 className="text-2xl py-[0px] font-semibold text-[#7D6E83] text-center md:text-left">
           Seek wisdom from the Mahabharata
         </h2>
+  
         
-        <p className="text-center md:text-left text-[#7D6E83]/80 max-w-lg">
-          Explore the ancient wisdom of one of the world greatest epics. 
-          Discover timeless teachings on dharma, karma, and the human condition. 
-          Engage with legendary figures like Krishna, Arjuna, and Draupadi.
-        </p>
-        
-        <div className="space-y-4 mt-4 w-full max-w-lg bg-[#F8EDE3]/50 p-4 rounded-lg border border-[#C8B6A6]/30">
-          <div className="flex items-start gap-3">
+        <div className="p-[10px] space-y-4 mt-4 w-full max-w-lg bg-[#F8EDE3]/50 rounded-lg border border-[#C8B6A6]/30">
+          <div className="flex items-start gap-3 ">
             <div className="bg-[#A75D5D]/20 p-2 rounded-full">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#A75D5D]">
                 <circle cx="12" cy="12" r="10"></circle>
@@ -98,14 +101,44 @@ export default function SageChat() {
             </div>
           </div>
         </div>
+        </div>
         
-        <button
-          onClick={() => setJourneyStarted(true)}
-          className="mt-6 bg-[#A75D5D] hover:bg-[#884A4A] text-white px-8 py-4 rounded-xl transition-all shadow-md hover:shadow-lg transform hover:-translate-y-1 text-lg font-medium"
-        >
-          Begin Your Journey
-        </button>
+        <div className="flex justify-center mt-6">
+  <div style={{ display: 'flex', justifyContent: 'center', marginTop: '24px' }}>
+  <button
+    onClick={() => setJourneyStarted(true)}
+    style={{
+      backgroundColor: '#A75D5D',
+      color: 'white',
+      padding: '12px 24px',
+      borderRadius: '12px',
+      fontSize: '18px',
+      fontWeight: '600',
+      border: 'none',
+      cursor: 'pointer',
+      boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+      transition: 'all 0.3s ease',
+      margin: '0 auto',
+    }}
+    onMouseOver={(e) => {
+      e.currentTarget.style.backgroundColor = '#884A4A';
+      e.currentTarget.style.transform = 'translateY(-2px)';
+    }}
+    onMouseOut={(e) => {
+      e.currentTarget.style.backgroundColor = '#A75D5D';
+      e.currentTarget.style.transform = 'translateY(0px)';
+    }}
+  >
+    Begin Your Journey
+  </button>
+</div>
+
+</div>
+
       </div>
     </div>
+    </motion.div>
   );
+  
+  
 }
