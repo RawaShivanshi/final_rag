@@ -7,7 +7,7 @@ import previousEnabled from "../public/images/previous-enabled.svg";
 import nextDisabled from "../public/images/next-disabled.svg";
 import nextEnabled from "../public/images/next-enabled.svg";
 import { motion, AnimatePresence } from "framer-motion";
-import { useRouter } from "next/navigation";
+
 
 // Import your images
 import imageOne from "../public/images/img4.jpg";
@@ -17,7 +17,7 @@ import imageFour from "../public/images/img5.jpg";
 import imageFive from "../public/images/img7.jpg";
 
 const Carousel = () => {
-  const router = useRouter();
+ 
   const [activeIndex, setActiveIndex] = useState(0);
   const [transitionDirection, setTransitionDirection] = useState("next");
   const [activeBg, setActiveBg] = useState(0);
