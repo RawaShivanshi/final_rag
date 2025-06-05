@@ -1,6 +1,8 @@
-import { cn } from "@/lib/utils";
+import { cn } from "../lib/utils";
+import React from "react";
 
-interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {}
+// Use type alias instead of empty interface
+type SkeletonProps = React.HTMLAttributes<HTMLDivElement>;
 
 export function Skeleton({ className, ...props }: SkeletonProps) {
   return (

@@ -29,7 +29,6 @@ export default function MahabharataRagScreen({ onBack }: MahabharataRagScreenPro
   const [loading, setLoading] = useState(false);
   const [showCharacterSelector, setShowCharacterSelector] = useState(false);
   const [activeCharacter, setActiveCharacter] = useState<string | undefined>(undefined);
-  const [characterMode, setCharacterMode] = useState(false);
   const [showSourceInfo, setShowSourceInfo] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -59,13 +58,7 @@ export default function MahabharataRagScreen({ onBack }: MahabharataRagScreenPro
   }, []);
 
   const handleSendMessage = async (message: string, isCharacterMode: boolean, character?: string) => {
-    // Update character mode state
-    setCharacterMode(isCharacterMode);
-
-    // Use the active character if in character mode but no specific character is provided
     const selectedCharacter = isCharacterMode ? character || activeCharacter : undefined;
-
-    // Create user message
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
       role: "user",
@@ -78,8 +71,8 @@ export default function MahabharataRagScreen({ onBack }: MahabharataRagScreenPro
     setLoading(true);
 
     try {
-      // Send request to backend API (FastAPI)
-      const response = await fetch("http://localhost:8000/chat", {
+      const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+      const response = await fetch(`${API_BASE_URL}/chat`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -98,7 +91,6 @@ export default function MahabharataRagScreen({ onBack }: MahabharataRagScreenPro
 
       const data = await response.json();
 
-      // Create assistant message from API response
       const assistantMessage: ChatMessage = {
         id: data.id || Date.now().toString() + "-response",
         role: "assistant",
@@ -113,7 +105,6 @@ export default function MahabharataRagScreen({ onBack }: MahabharataRagScreenPro
     } catch (error) {
       console.error("Error sending message:", error);
 
-      // Error message
       const errorMessage: ChatMessage = {
         id: Date.now().toString() + "-error",
         role: "assistant",
@@ -130,19 +121,12 @@ export default function MahabharataRagScreen({ onBack }: MahabharataRagScreenPro
 
   const toggleCharacterSelector = (show: boolean) => {
     setShowCharacterSelector(show);
-    setCharacterMode(show);
-
-    // If turning off character mode, also clear the active character
-    if (!show) {
-      setActiveCharacter(undefined);
-    }
+    if (!show) setActiveCharacter(undefined);
   };
 
   const handleCharacterSelect = (character: string) => {
     setActiveCharacter(character);
     setShowCharacterSelector(false);
-    // Keep character mode enabled
-    setCharacterMode(true);
   };
 
   const handleClearChat = () => {
@@ -156,14 +140,12 @@ export default function MahabharataRagScreen({ onBack }: MahabharataRagScreenPro
       },
     ]);
     setActiveCharacter(undefined);
-    setCharacterMode(false);
   };
 
   return (
     <div
       className="flex flex-col h-screen"
       style={{
-        
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundAttachment: "fixed",
@@ -220,7 +202,7 @@ export default function MahabharataRagScreen({ onBack }: MahabharataRagScreenPro
           <p className="text-sm text-[#7D6E83]/80">
             This oracle draws wisdom from the original Mahabharata text. Using advanced AI, it retrieves the most relevant passages to answer your questions.
             Character perspectives are based on their portrayal in the epic and associated literature.
-            Confidence scores reflect the oracle's assessment of response accuracy based on textual evidence.
+            Confidence scores reflect the oracle&apos;s assessment of response accuracy based on textual evidence.
           </p>
         </div>
       )}
@@ -256,9 +238,7 @@ export default function MahabharataRagScreen({ onBack }: MahabharataRagScreenPro
             {messages.map((msg) => (
               <div
                 key={msg.id}
-                className={`flex ${
-                  msg.role === "user" ? "justify-end" : "justify-start"
-                } mb-6`}
+                className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"} mb-6`}
               >
                 <div
                   className={`
@@ -270,14 +250,12 @@ export default function MahabharataRagScreen({ onBack }: MahabharataRagScreenPro
                     }
                   `}
                 >
-                  {/* User message with optional character mode indication */}
                   {msg.role === "user" && msg.character && (
                     <div className="text-xs font-medium text-white/80 mb-1">
                       Speaking to {msg.character}
                     </div>
                   )}
 
-                  {/* Assistant message with optional character perspective */}
                   {msg.role === "assistant" && msg.character && (
                     <div className="flex items-center gap-2 text-sm font-medium text-[#A75D5D] mb-2 pb-2 border-b border-[#C8B6A6]/30">
                       <div className="w-5 h-5 rounded-full bg-[#A75D5D]/20 flex items-center justify-center">

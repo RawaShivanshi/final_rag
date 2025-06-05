@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 const menus = ["home", "packages", "about", "gallery", "contact"];
 
 const Header = () => {
-  const [activeSection, setActiveSection] = useState(null);
+  const [activeSection, setActiveSection] = useState<string | null>(null);
   const [toggleMenu, setToggleMenu] = useState(false);
 
   useEffect(() => {
@@ -15,21 +15,25 @@ const Header = () => {
       threshold: 0.4,
     };
 
-    const observer = new IntersectionObserver((entries: any) => {
-      entries.forEach((entry: any) => {
-        if (entry.isIntersecting) {
-          setActiveSection(entry.target.id);
-        }
-      });
-    }, options);
+    const observer = new IntersectionObserver(
+      (entries: IntersectionObserverEntry[]) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id);
+          }
+        });
+      },
+      options
+    );
 
-    menus.forEach((menu: string) => {
+    menus.forEach((menu) => {
       const element = document.getElementById(menu);
       if (element) observer.observe(element);
     });
 
     return () => observer.disconnect();
-  }, [menus]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // menus is a constant, so it does not need to be a dependency
 
   return (
     <header className="fixed left-0 right-0 z-50 bg-transparent py-4 ">
@@ -62,23 +66,20 @@ const Header = () => {
           toggleMenu ? "flex" : "hidden sm:flex"
         } justify-center items-center gap-3 sm:gap-5 lg:gap-10 sm:flex-row flex-col mt-2 sm:mt-0`}
       >
-        {menus.map((menu: string, i: number) => {
-          return (
-            <a
-              key={i}
-              href={`#${menu}`}
-              className={`w-full sm:w-auto uppercase font-semibold text-base text-white text-center sm:px-3 lg:px-5 py-2 sm:py-1 rounded-2xl transition-all ease-linear hover:bg-[#4E521F] hover:bg-opacity-40 hover:shadow-md ${
-                activeSection == menu ? "bg-green-500 shadow-md" : ""
-              }`}
-            >
-              {menu}
-            </a>
-          );
-        })}
+        {menus.map((menu, i) => (
+          <a
+            key={i}
+            href={`#${menu}`}
+            className={`w-full sm:w-auto uppercase font-semibold text-base text-white text-center sm:px-3 lg:px-5 py-2 sm:py-1 rounded-2xl transition-all ease-linear hover:bg-[#4E521F] hover:bg-opacity-40 hover:shadow-md ${
+              activeSection === menu ? "bg-green-500 shadow-md" : ""
+            }`}
+          >
+            {menu}
+          </a>
+        ))}
       </nav>
     </header>
   );
 };
 
 export default Header;
-
