@@ -4,7 +4,7 @@ from models import ChatRequest, ChatResponse
 from utils import get_history, add_to_history
 from rag import retrieve_chunks, build_prompt, call_llm
 import json
-
+import os
 
 app = FastAPI()
 
@@ -71,7 +71,8 @@ async def chat_endpoint(req: ChatRequest):
         confidenceScore=confidence,
         sources=sources
     )
-    if __name__ == "__main__":
+
+if __name__ == "__main__":
     import uvicorn
     port = int(os.environ.get("PORT", 10000))
     uvicorn.run("main:app", host="0.0.0.0", port=port)
