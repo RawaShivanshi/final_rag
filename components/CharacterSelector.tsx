@@ -22,7 +22,7 @@ export function CharacterSelector({ onCharacterSelect }: CharacterSelectorProps)
     const fetchCharacters = async () => {
       try {
         setLoading(true);
-        const response = await fetch('http://localhost:8000/characters'); // Or your FastAPI endpoint
+        const response = await fetch('https://rohakpc-final-rag.hf.space/characters');// Or your FastAPI endpoint
         if (response.ok) {
           const data = await response.json();
           setCharacters(data);
