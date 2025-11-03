@@ -214,13 +214,19 @@ def call_llm(prompt: str) -> str:
     elif COHERE_AVAILABLE and os.getenv("COHERE_API_KEY"):
         try:
             co = cohere.Client(os.getenv("COHERE_API_KEY"))
-            co_response = co.generate(
-                model="command-r-plus",
-                prompt=prompt,
-                max_tokens=512,
-                temperature=0.7
+
+            messages = [
+                {"role": "user", "content": prompt}
+                        ]
+
+            co_response = co.chat.completions.create(
+            model="command-r-plus",
+            messages=messages,
+            max_tokens=512,
+            temperature=0.7
             )
-            return co_response.generations[0].text
+
+            return co_response.choices[0].message.content
         except Exception as e:
             print(f"Error calling Cohere API: {e}")
             return f"I apologize, but I'm having trouble accessing the Cohere AI service. Error: {str(e)}"
