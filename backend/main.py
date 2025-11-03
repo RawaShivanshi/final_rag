@@ -68,7 +68,6 @@ async def chat_endpoint(req: ChatRequest):
     return ChatResponse(
         response=response,
         character=req.character if req.mode == "character" else None,
-        confidenceScore=confidence,
         sources=sources
     )
 

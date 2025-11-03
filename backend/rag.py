@@ -166,6 +166,13 @@ def build_prompt(message: str, history: List[str], mode: str, character: Optiona
     
     # Add the user's message
     prompt_parts.append(f"USER QUESTION: {message}")
+    prompt_parts.append(
+        "Answer the question clearly and directly without using markdown formatting like bold or numbered lists. "
+        "Do not include phrases such as 'Based on the provided context' or similar to it."
+        "Please respond in plain, fluent language as if explaining to a human. Include citations with the format: Chapter, Section, Page number (e.g., Chapter 10, Section 4, Page 3441) and skip chapter and section if at all unsure."
+        "End your answer with a confidence score expressed as a percentage and try to have good and different scores in a chat history"
+
+    )
     prompt_parts.append("")
     
     # Different instructions based on mode
@@ -179,13 +186,16 @@ def build_prompt(message: str, history: List[str], mode: str, character: Optiona
 def call_llm(prompt: str) -> str:
     """Call the LLM API to generate a response, with fallback to Cohere if Together fails"""
     # Try Together AI first
-    if TOGETHER_AVAILABLE and os.getenv("TOGETHER_API_KEY"):
+    if 'TOGETHER_API_KEY' in os.environ and os.getenv("TOGETHER_API_KEY"):
         try:
             client = Together(api_key=os.getenv("TOGETHER_API_KEY"))
             response = client.chat.completions.create(
                 model="meta-llama/Llama-3-70b-chat-hf",
                 messages=[
-                    {"role": "system", "content": "You are an expert on the Mahabharata. Provide accurate, helpful responses based on the epic. When responding as a character, stay true to their personality and perspective."},
+                    {
+                        "role": "system",
+                        "content": "You are an expert on the Mahabharata. Provide accurate, helpful responses based on the epic. When responding as a character, stay true to their personality and perspective."
+                    },
                     {"role": "user", "content": prompt}
                 ],
                 max_tokens=512,
@@ -194,39 +204,35 @@ def call_llm(prompt: str) -> str:
             return response.choices[0].message.content
         except Exception as e:
             print(f"Error calling Together API: {e}")
+
             # Fallback to Cohere if available
-            if COHERE_AVAILABLE and os.getenv("COHERE_API_KEY"):
+            if 'COHERE_API_KEY' in os.environ and os.getenv("COHERE_API_KEY"):
                 try:
                     co = cohere.Client(os.getenv("COHERE_API_KEY"))
-                    co_response = co.generate(
-                        model="command-r-plus",
-                        prompt=prompt,
+                    co_response = co.chat(
+                        model="command-a-03-2025",
+                        message=prompt,
                         max_tokens=512,
                         temperature=0.7
                     )
-                    return co_response.generations[0].text
+                    return co_response.text
                 except Exception as e2:
                     print(f"Error calling Cohere API: {e2}")
                     return f"I apologize, but I'm having trouble accessing the AI services. Errors: Together: {str(e)}, Cohere: {str(e2)}"
             else:
                 return f"I apologize, but I'm having trouble accessing the AI service. Error: {str(e)}"
-    # If Together is not available, try Cohere
-    elif COHERE_AVAILABLE and os.getenv("COHERE_API_KEY"):
+
+    # If Together AI not available, try Cohere directly
+    elif 'COHERE_API_KEY' in os.environ and os.getenv("COHERE_API_KEY"):
         try:
             co = cohere.Client(os.getenv("COHERE_API_KEY"))
-
-            messages = [
-                {"role": "user", "content": prompt}
-                        ]
-
-            co_response = co.chat.completions.create(
-            model="command-r-plus",
-            messages=messages,
-            max_tokens=512,
-            temperature=0.7
+            co_response = co.chat(
+                model="command-a-03-2025",
+                message=prompt,
+                max_tokens=512,
+                temperature=0.7
             )
-
-            return co_response.choices[0].message.content
+            return co_response.text
         except Exception as e:
             print(f"Error calling Cohere API: {e}")
             return f"I apologize, but I'm having trouble accessing the Cohere AI service. Error: {str(e)}"
