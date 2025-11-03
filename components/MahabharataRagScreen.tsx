@@ -15,7 +15,6 @@ interface ChatMessage {
   content: string;
   character?: string;
   timestamp: Date;
-  confidenceScore?: number;
   sources?: {
     title: string;
     source: string;
@@ -97,7 +96,6 @@ export default function MahabharataRagScreen({ onBack }: MahabharataRagScreenPro
         content: data.response,
         character: data.character,
         timestamp: new Date(),
-        confidenceScore: data.confidenceScore,
         sources: data.sources,
       };
 
@@ -275,18 +273,7 @@ export default function MahabharataRagScreen({ onBack }: MahabharataRagScreenPro
                       })}
                     </span>
 
-                    {msg.confidenceScore !== undefined &&
-                      msg.role === "assistant" && (
-                        <div
-                          className={`flex items-center gap-1 ${
-                            msg.confidenceScore > 0.7
-                              ? "text-green-600"
-                              : "text-amber-600"
-                          }`}
-                        >
-                          Confidence: {Math.round(msg.confidenceScore * 100)}%
-                        </div>
-                      )}
+
                   </div>
 
                   {msg.sources && msg.sources.length > 0 && (
